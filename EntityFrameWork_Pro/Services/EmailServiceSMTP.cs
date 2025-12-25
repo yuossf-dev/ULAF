@@ -57,6 +57,7 @@ namespace EntityFrameWork_Pro.Services
                     smtpClient.UseDefaultCredentials = false;
                     smtpClient.Credentials = new NetworkCredential(_senderEmail, _senderPassword);
                     smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtpClient.Timeout = 30000; // 30 seconds timeout
 
                     var mailMessage = new MailMessage
                     {
@@ -101,14 +102,26 @@ namespace EntityFrameWork_Pro.Services
 
                     mailMessage.To.Add(toEmail);
 
+                    Console.WriteLine($"[EMAIL-SMTP] Attempting to send via {_smtpServer}:{_smtpPort}...");
                     await smtpClient.SendMailAsync(mailMessage);
                     Console.WriteLine($"[EMAIL-SMTP] ✅ Email sent successfully to {toEmail}");
                     return true;
                 }
             }
+            catch (SmtpException smtpEx)
+            {
+                Console.WriteLine($"[EMAIL-SMTP] ❌ SMTP Error: {smtpEx.Message}");
+                Console.WriteLine($"[EMAIL-SMTP] Status Code: {smtpEx.StatusCode}");
+                return false;
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"[EMAIL-SMTP] ❌ Error: {ex.Message}");
+                Console.WriteLine($"[EMAIL-SMTP] Error Type: {ex.GetType().Name}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"[EMAIL-SMTP] Inner: {ex.InnerException.Message}");
+                }
                 return false;
             }
         }
