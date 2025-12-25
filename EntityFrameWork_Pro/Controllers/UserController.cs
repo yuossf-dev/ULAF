@@ -11,9 +11,9 @@ namespace EntityFrameWork_Pro.Controllers
     {
         private readonly DBBridge _db;
         private readonly MicrosoftGraphService _graphService;
-        private readonly EmailService _emailService;
+        private readonly EmailServiceSMTP _emailService;
 
-        public UserController(DBBridge db, MicrosoftGraphService graphService, EmailService emailService)
+        public UserController(DBBridge db, MicrosoftGraphService graphService, EmailServiceSMTP emailService)
         {
             _db = db;
             _graphService = graphService;
