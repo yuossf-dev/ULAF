@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: lostandfound-app
+    env: docker
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DatabaseProvider
+        value: Sqlite
+      - key: ConnectionStrings__DefaultConnection
+        value: Data Source=/app/data/LostAndFound.db
+      - key: Firebase__ProjectId
+        sync: false
+      - key: Firebase__CredentialsPath
+        value: /app/firebase-key.json
+      - key: MicrosoftGraph__AccessToken
+        sync: false
+      - key: MicrosoftGraph__EmailAccessToken
+        sync: false

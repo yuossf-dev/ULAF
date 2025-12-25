@@ -1,0 +1,241 @@
+@model EntityFrameWork_Pro.Models.Item
+
+@{
+    ViewData["Title"] = "Item Posted";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Item Posted Successfully</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .success-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 4em;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .item-details {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .item-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .item-details p {
+            color: #666;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .matches-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .matches-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .match-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .match-score {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .score-high {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .score-medium {
+            background: #fff3cd;
+            color: #f39c12;
+        }
+
+        .score-low {
+            background: #f8d7da;
+            color: #e74c3c;
+        }
+
+        .match-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .match-card p {
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .no-matches {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .media-grid img,
+        .media-grid video {
+            width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-box">
+            <div class="success-icon">✓</div>
+            <h2>Item Posted Successfully!</h2>
+            <p>Your @Model.Status item has been posted. Check potential matches below.</p>
+        </div>
+
+        <div class="item-details">
+            <h3>Your Posted Item</h3>
+            <p><strong>Name:</strong> @Model.Name</p>
+            <p><strong>Location:</strong> @Model.Location</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+
+            @if (Model.MediaPaths != null && Model.MediaPaths.Any())
+            {
+                <div class="media-grid">
+                    @foreach (var item in Model.MediaPaths)
+                    {
+                        if (item.Contains(".mp4") || item.Contains(".mov"))
+                        {
+                            <video controls>
+                                <source src="@item" type="video/mp4" />
+                            </video>
+                        }
+                        else
+                        {
+                            <img src="@item" alt="Item image" />
+                        }
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="matches-section">
+            <h3>🔍 Possible Matches Found!</h3>
+
+            @if (ViewBag.Matches != null && ((List<(Item, int)>)ViewBag.Matches).Count > 0)
+            {
+                var matches = (List<(Item item, int score)>)ViewBag.Matches;
+                foreach (var match in matches)
+                {
+                    var matchScore = match.score;
+                    var matchItem = match.item;
+                    var scoreClass = matchScore >= 80 ? "score-high" : matchScore >= 70 ? "score-medium" : "score-low";
+                    var scoreText = matchScore >= 80 ? "High Match" : matchScore >= 70 ? "Medium Match" : "Low Match";
+
+                    <div class="match-card">
+                        <span class="match-score @scoreClass">@scoreText - @matchScore%</span>
+                        <h4>@matchItem.Name</h4>
+                        <p>📍 <strong>Location:</strong> @matchItem.Location</p>
+                        <p><strong>Status:</strong> @matchItem.Status</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-matches">
+                    <p>No matches found yet. Check back later or browse all items.</p>
+                </div>
+            }
+        </div>
+
+        <div style="text-align: center;">
+            <a asp-action="@(Model.Status == "Lost" ? "LostItems" : "FoundItems")" class="btn btn-primary">View All @Model.Status Items</a>
+            <a asp-action="AllItems" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

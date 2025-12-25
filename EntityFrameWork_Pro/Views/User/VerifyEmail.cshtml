@@ -1,0 +1,201 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التحقق من البريد الإلكتروني</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .verify-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .email-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .email-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px dashed #667eea;
+        }
+
+        .email-info .email {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .email-info .name {
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 5px;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c33;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="verify-container">
+        <div class="email-icon">📧</div>
+        <h1>تحقق من بريدك الإلكتروني</h1>
+        <p class="subtitle">تم إرسال رمز التحقق إلى</p>
+
+        <div class="email-info">
+            <div class="email">@ViewBag.Email</div>
+            <div class="name">@ViewBag.Name</div>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">
+                ⚠️ @ViewBag.Error
+            </div>
+        }
+
+        <form method="post" asp-action="VerifyEmail">
+            <div class="form-group">
+                <label for="verificationCode">أدخل رمز التحقق المكون من 6 أرقام:</label>
+                <input type="text" 
+                       id="verificationCode" 
+                       name="verificationCode" 
+                       maxlength="6" 
+                       pattern="\d{6}" 
+                       placeholder="000000"
+                       required 
+                       autofocus>
+            </div>
+
+            <button type="submit" class="submit-btn">✅ تأكيد الحساب</button>
+        </form>
+
+        <div class="info-box">
+            💡 تحقق من صندوق الوارد في بريدك الجامعي<br>
+            ⏱️ الرمز صالح لمدة 10 دقائق
+        </div>
+
+        <a href="@Url.Action("Register", "User")" class="back-link">← العودة للتسجيل</a>
+    </div>
+
+    <script>
+        // Auto-format verification code input
+        const input = document.getElementById('verificationCode');
+        input.addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    </script>
+</body>
+</html>

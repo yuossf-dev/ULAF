@@ -1,0 +1,11 @@
+**/.vs
+**/bin
+**/obj
+**/.git
+**/.gitignore
+**/node_modules
+**/Migrations
+*.db
+*.md
+firebase-key.json
+appsettings.Development.json

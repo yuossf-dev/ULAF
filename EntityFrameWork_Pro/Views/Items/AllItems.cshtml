@@ -1,0 +1,314 @@
+@model List<EntityFrameWork_Pro.Models.Item>
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = null;
+    var lang = Context.Request.Cookies["Language"] ?? "en";
+    var isArabic = lang == "ar";
+    var dir = isArabic ? "rtl" : "ltr";
+}
+
+<!DOCTYPE html>
+<html lang="@lang" dir="@dir">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(isArabic ? "لوحة التحكم - ULAF" : "Dashboard - ULAF")</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: @(isArabic ? "'Cairo', sans-serif" : "'Poppins', sans-serif");
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2em;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .welcome-text {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-logout {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .dashboard-title h2 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .dashboard-title p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .pages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+            margin-bottom: 40px;
+        }
+
+        .page-card {
+            background: white;
+            padding: 45px 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--card-color-1), var(--card-color-2));
+        }
+
+        .page-card.lost::before {
+            --card-color-1: #e74c3c;
+            --card-color-2: #c0392b;
+        }
+
+        .page-card.found::before {
+            --card-color-1: #27ae60;
+            --card-color-2: #229954;
+        }
+
+        .page-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .icon {
+            font-size: 4.5em;
+            margin-bottom: 25px;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .page-card:hover .icon {
+            transform: scale(1.1);
+        }
+
+        .lost-icon {
+            color: #e74c3c;
+        }
+
+        .found-icon {
+            color: #27ae60;
+        }
+
+        .page-card h2 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .page-card p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+
+        .btn-lost {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            font-size: 1.1em;
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-lost:hover {
+            box-shadow: 0 12px 30px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-found {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            font-size: 1.1em;
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-found:hover {
+            box-shadow: 0 12px 30px rgba(39, 174, 96, 0.4);
+        }
+
+        @@media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .dashboard-title h2 {
+                font-size: 2em;
+            }
+
+            .pages-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <i class="fas fa-search logo-icon"></i>
+                <div>
+                    <h1>@(isArabic ? "بوابة المفقودات" : "Lost & Found Portal")</h1>
+                    <div class="welcome-text">@(isArabic ? "مرحباً،" : "Welcome,") @Context.Session.GetString("UserName")</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <form asp-controller="Home" asp-action="SetLanguage" method="post" style="display: inline;">
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                    <button type="submit" name="lang" value="@(isArabic ? "en" : "ar")" class="lang-btn">
+                        <i class="fas fa-globe"></i>
+                        @(isArabic ? "English" : "عربي")
+                    </button>
+                </form>
+                <a asp-controller="User" asp-action="Logout" class="btn btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    @(isArabic ? "تسجيل الخروج" : "Logout")
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dashboard-title">
+            <h2>@(isArabic ? "ماذا تريد أن تفعل اليوم؟" : "What would you like to do today?")</h2>
+            <p>@(isArabic ? "اختر من الخيارات التالية" : "Choose from the options below")</p>
+        </div>
+
+        <div class="pages-grid">
+            <div class="page-card lost">
+                <div class="icon lost-icon">
+                    <i class="fas fa-search-minus"></i>
+                </div>
+                <h2>@(isArabic ? "المفقودات" : "Lost Items")</h2>
+                <p>@(isArabic ? "تبحث عن شيء فقدته؟ تصفح الأغراض التي وجدها الآخرون" : "Looking for something you lost? Browse items others have found.")</p>
+                <a asp-action="LostItems" class="btn btn-lost">
+                    <i class="fas fa-eye"></i>
+                    @(isArabic ? "عرض المفقودات" : "View Lost Items")
+                </a>
+            </div>
+
+            <div class="page-card found">
+                <div class="icon found-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>@(isArabic ? "الأغراض الموجودة" : "Found Items")</h2>
+                <p>@(isArabic ? "وجدت شيئاً؟ انشره هنا ليتمكن الآخرون من العثور عليه!" : "Found something? Post it here so others can find it!")</p>
+                <a asp-action="FoundItems" class="btn btn-found">
+                    <i class="fas fa-eye"></i>
+                    @(isArabic ? "عرض الأغراض الموجودة" : "View Found Items")
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

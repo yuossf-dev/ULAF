@@ -1,0 +1,242 @@
+@model IEnumerable<EntityFrameWork_Pro.Models.Item>
+@{
+    ViewData["Title"] = "Manage Items";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="utf-8" />
+    <title>إدارة الأغراض</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .btn-back {
+            background: white;
+            color: #667eea;
+            padding: 10px 25px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .success {
+            background: #d5f4e6;
+            color: #27ae60;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .status-found {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .status-lost {
+            background: #fff3cd;
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>📦 إدارة الأغراض</h1>
+            <a asp-action="Index" class="btn-back">← العودة</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="panel">
+            <h2>قائمة الأغراض المفقودة والموجودة</h2>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="success">@TempData["Success"]</div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="error">@TempData["Error"]</div>
+            }
+
+            @if (Model != null && Model.Any())
+            {
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الإجراءات</th>
+                            <th>تاريخ الإضافة</th>
+                            <th>المالك</th>
+                            <th>الموقع</th>
+                            <th>الحالة</th>
+                            <th>التصنيف</th>
+                            <th>الوصف</th>
+                            <th>الاسم</th>
+                            <th>الصورة</th>
+                            <th>المعرف</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <form method="post" asp-action="DeleteItem" onsubmit="return confirm('هل أنت متأكد من حذف هذا الغرض؟');" style="display: inline;">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn-delete">🗑️ حذف</button>
+                                    </form>
+                                </td>
+                                <td>@item.Date.ToString("yyyy/MM/dd")</td>
+                                <td>@(item.PostedBy?.UserName ?? "N/A")</td>
+                                <td>@item.Location</td>
+                                <td>
+                                    <span class="status-badge @(item.Status == "موجود" ? "status-found" : "status-lost")">
+                                        @item.Status
+                                    </span>
+                                </td>
+                                <td>@item.Category</td>
+                                <td style="max-width: 200px;">@item.Description</td>
+                                <td>@item.Name</td>
+                                <td>
+                                    @if (item.HasImages)
+                                    {
+                                        <img src="@item.FirstImage" alt="@item.Name" class="item-image" />
+                                    }
+                                    else
+                                    {
+                                        <span>لا توجد صورة</span>
+                                    }
+                                </td>
+                                <td>@item.Id</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="no-data">
+                    لا توجد أغراض مسجلة
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>

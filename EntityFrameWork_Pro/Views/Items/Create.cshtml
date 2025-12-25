@@ -1,0 +1,356 @@
+@model EntityFrameWork_Pro.Models.Item
+
+@{
+    ViewData["Title"] = "Create Item";
+    Layout = null;
+    var lang = Context.Request.Cookies["Language"] ?? "en";
+    var isArabic = lang == "ar";
+    var dir = isArabic ? "rtl" : "ltr";
+}
+
+<!DOCTYPE html>
+<html lang="@lang" dir="@dir">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(isArabic ? "نشر غرض - ULAF" : "Post Item - ULAF")</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: @(isArabic ? "'Cairo', sans-serif" : "'Poppins', sans-serif");
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Language Switcher */
+        .lang-switcher-fixed {
+            position: fixed;
+            top: 20px;
+            @(isArabic ? "left" : "right"): 20px;
+            z-index: 1000;
+        }
+        .lang-btn-fixed {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .lang-btn-fixed:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Animated Background */
+        .background-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
+        }
+        .shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            top: 60%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+        @@keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-30px) translateX(20px); }
+            50% { transform: translateY(-50px) translateX(-20px); }
+            75% { transform: translateY(-20px) translateX(30px); }
+        }
+
+        .create-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 45px 55px;
+            border-radius: 30px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            max-width: 650px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #333;
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 35px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .status-lost {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+
+        .status-found {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.15em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        @@media (max-width: 768px) {
+            .create-container {
+                padding: 35px 25px;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switcher-fixed">
+        <form asp-controller="Home" asp-action="SetLanguage" method="post">
+            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+            <button type="submit" name="lang" value="@(isArabic ? "en" : "ar")" class="lang-btn-fixed">
+                <i class="fas fa-globe"></i>
+                @(isArabic ? "English" : "عربي")
+            </button>
+        </form>
+    </div>
+
+    <div class="background-animation">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <div class="create-container">
+        <h2>@(isArabic ? "نشر غرض" : "Post") @(isArabic ? (ViewBag.Status == "Lost" ? "مفقود" : "موجود") : ViewBag.Status) @(isArabic ? "" : "Item")</h2>
+        <div class="subtitle">
+            <span class="status-badge @(ViewBag.Status == "Lost" ? "status-lost" : "status-found")">
+                @if (ViewBag.Status == "Lost")
+                {
+                    <i class="fas fa-search-minus"></i>
+                    <span>@(isArabic ? "غرض مفقود" : "Lost Item")</span>
+                }
+                else
+                {
+                    <i class="fas fa-check-circle"></i>
+                    <span>@(isArabic ? "غرض موجود" : "Found Item")</span>
+                }
+            </span>
+        </div>
+
+        @using (Html.BeginForm("Create", "Items", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="hidden" name="Status" value="@ViewBag.Status" />
+
+            <div class="form-group">
+                <label>@(isArabic ? "اسم الغرض *" : "Item Name *")</label>
+                <input type="text" name="Name" placeholder="@(isArabic ? "مثال: محفظة سوداء" : "e.g., Black Wallet")" required />
+            </div>
+
+            <div class="form-group">
+                <label>@(isArabic ? "الفئة *" : "Category *")</label>
+                <select name="Category" required>
+                    <option value="">@(isArabic ? "اختر الفئة" : "Select Category")</option>
+                    <option value="Wallet">@(isArabic ? "محفظة" : "Wallet")</option>
+                    <option value="Phone">@(isArabic ? "هاتف" : "Phone")</option>
+                    <option value="Keys">@(isArabic ? "مفاتيح" : "Keys")</option>
+                    <option value="ID">@(isArabic ? "بطاقة هوية / بطاقة طالب" : "ID Card / Student Card")</option>
+                    <option value="Bag">@(isArabic ? "حقيبة / شنطة ظهر" : "Bag / Backpack")</option>
+                    <option value="Laptop">@(isArabic ? "لابتوب / تابلت" : "Laptop / Tablet")</option>
+                    <option value="Watch">@(isArabic ? "ساعة" : "Watch")</option>
+                    <option value="Jewelry">@(isArabic ? "مجوهرات" : "Jewelry")</option>
+                    <option value="Clothing">@(isArabic ? "ملابس" : "Clothing")</option>
+                    <option value="Books">@(isArabic ? "كتب / دفاتر" : "Books / Notebooks")</option>
+                    <option value="Other">@(isArabic ? "أخرى" : "Other")</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>@(isArabic ? "الوصف" : "Description")</label>
+                <textarea name="Description" placeholder="@(isArabic ? "أضف تفاصيل أكثر عن الغرض..." : "Add more details about the item...")"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>@(isArabic ? "الموقع *" : "Location *")</label>
+                <input type="text" name="Location" placeholder="@(ViewBag.Status == "Lost" ? (isArabic ? "أين فقدته؟" : "Where did you lose it?") : (isArabic ? "أين وجدته؟" : "Where did you find it?"))" required />
+            </div>
+
+            <div class="form-group">
+                <label>@(isArabic ? "التاريخ *" : "Date *")</label>
+                <input type="date" name="Date" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+            </div>
+
+            <div class="form-group">
+                <label>@(isArabic ? "معلومات التواصل *" : "Contact Information *")</label>
+                <input type="text" name="ContactInfo" placeholder="@(isArabic ? "هاتفك أو بريدك الإلكتروني" : "Your phone or email")" required />
+            </div>
+
+            <div class="form-group">
+                <label>@(isArabic ? "رفع صور (اختياري)" : "Upload Images (Optional)")</label>
+                <input type="file" name="files" multiple accept="image/*,video/*" />
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i>
+                @(isArabic ? "نشر والبحث عن تطابقات" : "Post & Find Matches")
+            </button>
+        }
+
+        <div class="back-link">
+            <a asp-action="AllItems">
+                <i class="fas fa-arrow-@(isArabic ? "right" : "left")"></i>
+                @(isArabic ? "العودة للوحة التحكم" : "Back to Dashboard")
+            </a>
+        </div>
+    </div>
+</body>
+</html>

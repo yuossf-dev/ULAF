@@ -1,0 +1,269 @@
+﻿@{
+    ViewData["Title"] = "About Us - ULAF";
+    var lang = Context.Request.Cookies["Language"] ?? "en";
+    var isArabic = lang == "ar";
+}
+
+<style>
+    .about-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .hero-section {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        color: white;
+        margin-bottom: 50px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    
+    .hero-section h1 {
+        font-size: 3em;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+    
+    .hero-section p {
+        font-size: 1.3em;
+        opacity: 0.9;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+    
+    .feature-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .feature-icon {
+        font-size: 3em;
+        margin-bottom: 20px;
+    }
+    
+    .feature-card h3 {
+        color: #667eea;
+        margin-bottom: 15px;
+    }
+    
+    .mission-section {
+        background: #f8f9fa;
+        padding: 50px 30px;
+        border-radius: 20px;
+        margin-bottom: 50px;
+    }
+    
+    .mission-section h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+    }
+    
+    .mission-content {
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+        font-size: 1.1em;
+        color: #555;
+    }
+    
+    .stats-section {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+    
+    .stat-box {
+        text-align: center;
+        padding: 30px;
+    }
+    
+    .stat-number {
+        font-size: 3em;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+    
+    .stat-label {
+        font-size: 1.1em;
+        color: #666;
+    }
+    
+    .cta-section {
+        text-align: center;
+        padding: 50px 20px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        border-radius: 20px;
+        color: white;
+    }
+    
+    .cta-section h2 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+    
+    .btn-cta {
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 1.1em;
+    }
+    
+    .btn-primary-cta {
+        background: white;
+        color: #f5576c;
+    }
+    
+    .btn-secondary-cta {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+    }
+    
+    .btn-cta:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+</style>
+
+<div class="about-container">
+    <div class="hero-section">
+        <h1>🔍 ULAF</h1>
+        <p>@(isArabic ? "نظام المفقودات الجامعي - رابطك داخل الحرم الجامعي" : "University Lost And Found - Your Campus Connection")</p>
+    </div>
+
+    <div class="mission-section">
+        <h2>@(isArabic ? "مهمتنا" : "Our Mission")</h2>
+        <div class="mission-content">
+            <p>
+                @if (isArabic)
+                {
+                    <text>
+                        ULAF هو منصة مخصصة لمساعدة طلاب الجامعة على إعادة الاتصال بممتلكاتهم المفقودة.
+                        نحن ندرك مدى الإحباط الناتج عن فقدان أغراض قيمة في الحرم الجامعي، ونحن هنا لجعل عملية الاسترداد
+                        بسيطة وآمنة وفعالة.
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        ULAF is a dedicated platform designed to help university students reconnect with their lost belongings.
+                        We understand the frustration of losing valuable items on campus, and we're here to make the recovery process
+                        simple, secure, and efficient.
+                    </text>
+                }
+            </p>
+            <p style="margin-top: 20px;">
+                @if (isArabic)
+                {
+                    <text>
+                        تربط منصتنا الطلاب الذين عثروا على أغراض مع من فقدوها، مما يخلق مجتمعاً موثوقاً
+                        حيث يهتم الجميع ببعضهم البعض. مع حسابات الطلاب المعتمدة والإشعارات الفورية،
+                        لم يكن العثور على أغراضك المفقودة أسهل من أي وقت مضى.
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        Our platform connects students who have found items with those who have lost them, creating a trusted
+                        community where everyone looks out for each other. With verified student accounts and real-time notifications,
+                        finding your lost items has never been easier.
+                    </text>
+                }
+            </p>
+        </div>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>@(isArabic ? "آمن وموثق" : "Secure & Verified")</h3>
+            <p>@(isArabic ? "فقط الطلاب الجامعيون المعتمدون يمكنهم الوصول إلى المنصة، مما يضمن مجتمعاً موثوقاً." : "Only verified university students can access the platform, ensuring a trusted community.")</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>@(isArabic ? "تحديثات فورية" : "Real-time Updates")</h3>
+            <p>@(isArabic ? "احصل على إشعارات فورية عند العثور على أغراض تطابق وصفك." : "Get instant notifications when items matching your description are found.")</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>@(isArabic ? "سهل الاستخدام" : "Easy to Use")</h3>
+            <p>@(isArabic ? "واجهة بسيطة للإبلاغ عن الأغراض المفقودة أو تسجيل الأغراض الموجودة مع الصور." : "Simple interface to report lost items or register found items with photos.")</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>@(isArabic ? "متوافق مع الجوال" : "Mobile Friendly")</h3>
+            <p>@(isArabic ? "الوصول إلى ULAF من أي جهاز - حاسوب مكتبي، جهاز لوحي، أو هاتف ذكي." : "Access ULAF from any device - desktop, tablet, or smartphone.")</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3>@(isArabic ? "مجتمع تعاوني" : "Community Driven")</h3>
+            <p>@(isArabic ? "بُني بواسطة الطلاب، للطلاب. ساعد زملاءك في العثور على ممتلكاتهم." : "Built by students, for students. Help your fellow classmates find their belongings.")</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📧</div>
+            <h3>@(isArabic ? "التحقق بالبريد الإلكتروني" : "Email Verification")</h3>
+            <p>@(isArabic ? "التحقق من البريد الإلكتروني الجامعي يضمن أن الطلاب الشرعيين فقط يمكنهم نشر الأغراض." : "University email verification ensures only legitimate students can post items.")</p>
+        </div>
+    </div>
+
+    <div class="stats-section">
+        <div class="stat-box">
+            <div class="stat-number">+1000</div>
+            <div class="stat-label">@(isArabic ? "غرض تم العثور عليه" : "Items Found")</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">+500</div>
+            <div class="stat-label">@(isArabic ? "مستخدم نشط" : "Active Users")</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">95%</div>
+            <div class="stat-label">@(isArabic ? "معدل النجاح" : "Success Rate")</div>
+        </div>
+    </div>
+
+    <div class="cta-section">
+        <h2>@(isArabic ? "هل أنت مستعد للبدء؟" : "Ready to Get Started?")</h2>
+        <p>@(isArabic ? "انضم إلى مجتمعنا وساعد في إعادة الأغراض المفقودة إلى أصحابها!" : "Join our community and help reunite lost items with their owners!")</p>
+        <div class="cta-buttons">
+            <a href="@Url.Action("SignUp", "User")" class="btn-cta btn-primary-cta">@(isArabic ? "إنشاء حساب الآن" : "Sign Up Now")</a>
+            <a href="@Url.Action("Login", "User")" class="btn-cta btn-secondary-cta">@(isArabic ? "تسجيل الدخول" : "Login")</a>
+        </div>
+    </div>
+</div>

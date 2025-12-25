@@ -1,0 +1,349 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+    var lang = Context.Request.Cookies["Language"] ?? "en";
+    var isArabic = lang == "ar";
+    var dir = isArabic ? "rtl" : "ltr";
+}
+
+<!DOCTYPE html>
+<html lang="@lang" dir="@dir">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(isArabic ? "تسجيل الدخول - ULAF" : "Login - ULAF")</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: @(isArabic ? "'Cairo', sans-serif" : "'Poppins', sans-serif");
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Language Switcher */
+        .lang-switcher-fixed {
+            position: fixed;
+            top: 20px;
+            @(isArabic ? "left" : "right"): 20px;
+            z-index: 1000;
+        }
+        .lang-btn-fixed {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .lang-btn-fixed:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Animated Background */
+        .background-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        .shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            top: 60%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+        .shape:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            top: 80%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        @@keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-30px) translateX(20px); }
+            50% { transform: translateY(-50px) translateX(-20px); }
+            75% { transform: translateY(-20px) translateX(30px); }
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 50px 60px;
+            border-radius: 30px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-small {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-small i {
+            font-size: 3em;
+            color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 35px;
+            font-size: 1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+            border-left: 4px solid #c33;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+            border-left: 4px solid #28a745;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        @@media (max-width: 768px) {
+            .login-container {
+                padding: 40px 30px;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switcher-fixed">
+        <form asp-controller="Home" asp-action="SetLanguage" method="post">
+            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+            <button type="submit" name="lang" value="@(isArabic ? "en" : "ar")" class="lang-btn-fixed">
+                <i class="fas fa-globe"></i>
+                @(isArabic ? "English" : "عربي")
+            </button>
+        </form>
+    </div>
+
+    <div class="background-animation">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <div class="logo-small">
+            <i class="fas fa-sign-in-alt"></i>
+        </div>
+        <h2>@(isArabic ? "تسجيل الدخول" : "Login")</h2>
+        <p class="subtitle">@(isArabic ? "مرحباً بعودتك إلى ULAF" : "Welcome back to ULAF")</p>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="success-message">
+                ✅ @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+
+        <form method="post" asp-action="Login">
+            <div class="form-group">
+                <label>@(isArabic ? "الرقم الجامعي" : "Student ID")</label>
+                <input type="text" name="studentId" placeholder="@(isArabic ? "مثال: 202412345" : "e.g., 202412345")" required />
+            </div>
+
+            <div class="form-group">
+                <label>@(isArabic ? "كلمة المرور" : "Password")</label>
+                <input type="password" name="password" required />
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-sign-in-alt"></i>
+                @(isArabic ? "تسجيل الدخول" : "Login")
+            </button>
+        </form>
+
+        <div class="signup-link">
+            @(isArabic ? "ليس لديك حساب؟" : "Don't have an account?") 
+            <a asp-action="SignUp">@(isArabic ? "إنشاء حساب" : "Sign Up")</a>
+        </div>
+
+        <div class="back-link">
+            <a asp-controller="Home" asp-action="Welcome">
+                <i class="fas fa-arrow-@(isArabic ? "right" : "left")"></i>
+                @(isArabic ? "العودة للرئيسية" : "Back to Home")
+            </a>
+        </div>
+    </div>
+</body>
+</html>
