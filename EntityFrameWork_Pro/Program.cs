@@ -100,22 +100,35 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// ⚡ ONE-TIME UPDATE: Mark existing users as verified
+// Ensure database is created and migrations are applied
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DBBridge>();
-    var unverifiedUsers = db.Users.Where(u => !u.IsEmailVerified).ToList();
     
-    if (unverifiedUsers.Any())
+    // Create database and apply migrations
+    db.Database.EnsureCreated();
+    Console.WriteLine("[STARTUP] ✅ Database initialized");
+    
+    // ⚡ ONE-TIME UPDATE: Mark existing users as verified
+    try
     {
-        Console.WriteLine($"[UPDATE] Found {unverifiedUsers.Count} unverified users");
-        foreach (var user in unverifiedUsers)
+        var unverifiedUsers = db.Users.Where(u => !u.IsEmailVerified).ToList();
+        
+        if (unverifiedUsers.Any())
         {
-            user.IsEmailVerified = true;
-            Console.WriteLine($"[UPDATE] Marked {user.UserName} ({user.StudentId}) as verified");
+            Console.WriteLine($"[UPDATE] Found {unverifiedUsers.Count} unverified users");
+            foreach (var user in unverifiedUsers)
+            {
+                user.IsEmailVerified = true;
+                Console.WriteLine($"[UPDATE] Marked {user.UserName} ({user.StudentId}) as verified");
+            }
+            db.SaveChanges();
+            Console.WriteLine("[UPDATE] ✅ All existing users marked as verified!");
         }
-        db.SaveChanges();
-        Console.WriteLine("[UPDATE] ✅ All existing users marked as verified!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[UPDATE] Note: {ex.Message}");
     }
 }
 
