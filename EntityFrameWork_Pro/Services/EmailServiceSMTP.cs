@@ -22,6 +22,8 @@ namespace EntityFrameWork_Pro.Services
             _senderName = configuration["Email:DisplayName"] ?? "ULA Lost & Found";
             
             Console.WriteLine($"[EMAIL-SMTP] Initialized with: {_senderEmail}");
+            Console.WriteLine($"[EMAIL-SMTP] Password length: {_senderPassword?.Length ?? 0}");
+            Console.WriteLine($"[EMAIL-SMTP] Password starts with: {(_senderPassword?.Length > 0 ? _senderPassword.Substring(0, Math.Min(3, _senderPassword.Length)) : "EMPTY")}");
         }
 
         public string GenerateVerificationCode()
