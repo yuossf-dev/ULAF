@@ -49,15 +49,25 @@ try
     var projectId = builder.Configuration["Firebase:ProjectId"];
     var credentialsPath = builder.Configuration["Firebase:CredentialsPath"];
     
+    Console.WriteLine($"[FIREBASE-INIT] ProjectId: {projectId}");
+    Console.WriteLine($"[FIREBASE-INIT] CredentialsPath: {credentialsPath}");
+    Console.WriteLine($"[FIREBASE-INIT] File exists: {File.Exists(credentialsPath)}");
+    
     if (!string.IsNullOrEmpty(projectId) && !string.IsNullOrEmpty(credentialsPath) && File.Exists(credentialsPath))
     {
         Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialsPath);
         firestore = FirestoreDb.Create(projectId);
         builder.Services.AddSingleton(firestore);
+        Console.WriteLine("[FIREBASE-INIT] ✅ Firebase initialized successfully!");
+    }
+    else
+    {
+        Console.WriteLine("[FIREBASE-INIT] ❌ Firebase NOT initialized - missing config or file");
     }
 }
-catch (Exception)
+catch (Exception ex)
 {
+    Console.WriteLine($"[FIREBASE-INIT] ❌ Error: {ex.Message}");
     // Firebase not configured, will use SQL Server only
 }
 
@@ -81,18 +91,31 @@ builder.Services.AddScoped<IRepository>(provider =>
 // Register the repository resolver based on DatabaseMode
 // ALWAYS use Firebase in production
 var useFirebase = builder.Environment.IsProduction() || DatabaseMode.IsOnline;
+Console.WriteLine($"[REPO-SELECTION] Environment: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"[REPO-SELECTION] IsProduction: {builder.Environment.IsProduction()}");
+Console.WriteLine($"[REPO-SELECTION] DatabaseMode.IsOnline: {DatabaseMode.IsOnline}");
+Console.WriteLine($"[REPO-SELECTION] useFirebase: {useFirebase}");
+Console.WriteLine($"[REPO-SELECTION] firestore != null: {firestore != null}");
 
 builder.Services.AddScoped<IItemRepository>(provider =>
 {
     if (useFirebase && firestore != null)
+    {
+        Console.WriteLine("[REPO-SELECTION] ✅ Using Firebase for Items");
         return provider.GetRequiredService<FirebaseItemRepository>();
+    }
+    Console.WriteLine("[REPO-SELECTION] ❌ Using SQL for Items");
     return provider.GetRequiredService<SqlServerItemRepository>();
 });
 
 builder.Services.AddScoped<IUserRepository>(provider =>
 {
     if (useFirebase && firestore != null)
+    {
+        Console.WriteLine("[REPO-SELECTION] ✅ Using Firebase for Users");
         return provider.GetRequiredService<FirebaseUserRepository>();
+    }
+    Console.WriteLine("[REPO-SELECTION] ❌ Using SQL for Users");
     return provider.GetRequiredService<SqlServerUserRepository>();
 });
 
