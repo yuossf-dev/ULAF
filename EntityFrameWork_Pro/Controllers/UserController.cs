@@ -10,12 +10,14 @@ namespace EntityFrameWork_Pro.Controllers
     public class UserController : Controller
     {
         private readonly DBBridge _db;
+        private readonly IUserRepository _userRepo;
         private readonly MicrosoftGraphService _graphService;
         private readonly EmailService _emailService;
 
-        public UserController(DBBridge db, MicrosoftGraphService graphService, EmailService emailService)
+        public UserController(DBBridge db, IUserRepository userRepo, MicrosoftGraphService graphService, EmailService emailService)
         {
             _db = db;
+            _userRepo = userRepo;
             _graphService = graphService;
             _emailService = emailService;
         }
@@ -45,14 +47,13 @@ namespace EntityFrameWork_Pro.Controllers
                 return View();
             }
 
-            if (_db.Users.Any(u => u.UserName == user.UserName || u.Email == user.Email))
+            if (await _userRepo.UserExistsAsync(user.UserName, user.Email))
             {
                 ViewBag.Error = "Username or Email already exists";
                 return View();
             }
 
-            _db.Users.Add(user);
-            _db.SaveChanges();
+            await _userRepo.AddUserAsync(user);
 
             return RedirectToAction("Login");
         }
@@ -103,7 +104,7 @@ namespace EntityFrameWork_Pro.Controllers
             }
 
             // Check if already registered
-            if (_db.Users.Any(u => u.StudentId == user.StudentId))
+            if (await _userRepo.UserExistsByStudentIdAsync(user.StudentId))
             {
                 ViewBag.Error = "هذا الرقم الجامعي مسجل بالفعل";
                 return View("SignUp");
@@ -175,8 +176,7 @@ namespace EntityFrameWork_Pro.Controllers
 
             // ✅ CODE VERIFIED! Create the account
             user.IsEmailVerified = true; // Mark as verified
-            _db.Users.Add(user);
-            _db.SaveChanges();
+            await _userRepo.AddUserAsync(user);
 
             Console.WriteLine($"✅ Account verified and created for: {user.UserName}");
             TempData["SuccessMessage"] = "تم تفعيل الحساب بنجاح! يمكنك الآن تسجيل الدخول";
@@ -187,9 +187,9 @@ namespace EntityFrameWork_Pro.Controllers
         public IActionResult Login() => View();
 
         [HttpPost]
-        public IActionResult Login(string studentId, string password)
+        public async Task<IActionResult> Login(string studentId, string password)
         {
-            var user = _db.Users.FirstOrDefault(u => u.StudentId == studentId && u.Password == password);
+            var user = await _userRepo.GetUserByStudentIdAndPasswordAsync(studentId, password);
 
             if (user == null)
             {

@@ -151,10 +151,12 @@ namespace EntityFrameWork_Pro.Repositories
             await docRef.SetAsync(new
             {
                 user.Id,
+                user.StudentId,
                 user.UserName,
                 user.Email,
                 user.Password,
-                user.Phone
+                user.Phone,
+                user.IsEmailVerified
             });
             
             return user;
@@ -176,15 +178,40 @@ namespace EntityFrameWork_Pro.Repositories
             return GetUserByUsernameAsync(username).GetAwaiter().GetResult();
         }
 
+        public async Task<User> GetUserByStudentIdAsync(string studentId)
+        {
+            var query = _firestore.Collection(_collectionName).WhereEqualTo("StudentId", studentId);
+            var snapshot = await query.GetSnapshotAsync();
+            return snapshot.Documents.Count > 0 ? ConvertToUser(snapshot.Documents[0]) : null;
+        }
+
+        public async Task<bool> UserExistsByStudentIdAsync(string studentId)
+        {
+            var query = _firestore.Collection(_collectionName).WhereEqualTo("StudentId", studentId);
+            var snapshot = await query.GetSnapshotAsync();
+            return snapshot.Documents.Count > 0;
+        }
+
+        public async Task<User> GetUserByStudentIdAndPasswordAsync(string studentId, string password)
+        {
+            var query = _firestore.Collection(_collectionName)
+                .WhereEqualTo("StudentId", studentId)
+                .WhereEqualTo("Password", password);
+            var snapshot = await query.GetSnapshotAsync();
+            return snapshot.Documents.Count > 0 ? ConvertToUser(snapshot.Documents[0]) : null;
+        }
+
         private User ConvertToUser(DocumentSnapshot doc)
         {
             return new User
             {
                 Id = doc.GetValue<int>("Id"),
+                StudentId = doc.ContainsField("StudentId") ? doc.GetValue<string>("StudentId") : null,
                 UserName = doc.GetValue<string>("UserName"),
                 Email = doc.GetValue<string>("Email"),
                 Password = doc.GetValue<string>("Password"),
-                Phone = doc.ContainsField("Phone") ? doc.GetValue<string>("Phone") : null
+                Phone = doc.ContainsField("Phone") ? doc.GetValue<string>("Phone") : null,
+                IsEmailVerified = doc.ContainsField("IsEmailVerified") ? doc.GetValue<bool>("IsEmailVerified") : false
             };
         }
     }
