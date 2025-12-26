@@ -2,7 +2,7 @@ namespace EntityFrameWork_Pro.Services
 {
     public static class DatabaseMode
     {
-        private static bool _isOnline = false;
+        private static bool _isOnline = true; // Changed to true - use Firebase by default
 
         public static bool IsOnline
         {

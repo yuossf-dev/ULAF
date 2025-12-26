@@ -1,15 +1,5 @@
 services:
-  # PostgreSQL Database
-  - type: pserv
-    name: lostandfound-db
-    plan: free
-    env: docker
-    region: oregon
-    databases:
-      - name: lostandfounddb
-        user: lostandfounduser
-
-  # Web Service
+  # Web Service - Using Firebase (no PostgreSQL needed!)
   - type: web
     name: lostandfound-app
     env: docker
@@ -18,14 +8,8 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: DatabaseProvider
-        value: PostgreSQL
-      - key: ConnectionStrings__DefaultConnection
-        fromDatabase:
-          name: lostandfound-db
-          property: connectionString
       - key: Firebase__ProjectId
-        sync: false
+        value: lostandfound-d22e2
       - key: Firebase__CredentialsPath
         value: /app/firebase-key.json
       - key: MicrosoftGraph__AccessToken
