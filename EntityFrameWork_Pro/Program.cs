@@ -13,8 +13,8 @@ builder.Services.AddControllersWithViews();
 // Register Microsoft Graph Service (for student validation)
 builder.Services.AddSingleton<MicrosoftGraphService>();
 
-// Register Email Service (SMTP - no tokens needed!)
-builder.Services.AddSingleton<EmailServiceSMTP>();
+// Register Email Service (Resend - super easy!)
+builder.Services.AddSingleton<EmailServiceResend>();
 
 // Debug: Check if tokens are configured
 var validationToken = builder.Configuration["MicrosoftGraph:AccessToken"];
