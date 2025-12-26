@@ -79,16 +79,19 @@ builder.Services.AddScoped<IRepository>(provider =>
 });
 
 // Register the repository resolver based on DatabaseMode
+// ALWAYS use Firebase in production
+var useFirebase = builder.Environment.IsProduction() || DatabaseMode.IsOnline;
+
 builder.Services.AddScoped<IItemRepository>(provider =>
 {
-    if (DatabaseMode.IsOnline && firestore != null)
+    if (useFirebase && firestore != null)
         return provider.GetRequiredService<FirebaseItemRepository>();
     return provider.GetRequiredService<SqlServerItemRepository>();
 });
 
 builder.Services.AddScoped<IUserRepository>(provider =>
 {
-    if (DatabaseMode.IsOnline && firestore != null)
+    if (useFirebase && firestore != null)
         return provider.GetRequiredService<FirebaseUserRepository>();
     return provider.GetRequiredService<SqlServerUserRepository>();
 });
