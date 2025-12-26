@@ -48,12 +48,25 @@ try
 {
     var projectId = builder.Configuration["Firebase:ProjectId"];
     var credentialsPath = builder.Configuration["Firebase:CredentialsPath"];
+    var credentialsJson = builder.Configuration["Firebase:CredentialsJson"];
     
     Console.WriteLine($"[FIREBASE-INIT] ProjectId: {projectId}");
     Console.WriteLine($"[FIREBASE-INIT] CredentialsPath: {credentialsPath}");
-    Console.WriteLine($"[FIREBASE-INIT] File exists: {File.Exists(credentialsPath)}");
+    Console.WriteLine($"[FIREBASE-INIT] CredentialsJson exists: {!string.IsNullOrEmpty(credentialsJson)}");
+    Console.WriteLine($"[FIREBASE-INIT] File exists: {!string.IsNullOrEmpty(credentialsPath) && File.Exists(credentialsPath)}");
     
-    if (!string.IsNullOrEmpty(projectId) && !string.IsNullOrEmpty(credentialsPath) && File.Exists(credentialsPath))
+    // Try JSON from environment first, then file
+    if (!string.IsNullOrEmpty(projectId) && !string.IsNullOrEmpty(credentialsJson))
+    {
+        // Write JSON to temp file
+        var tempPath = Path.Combine(Path.GetTempPath(), "firebase-key.json");
+        File.WriteAllText(tempPath, credentialsJson);
+        Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", tempPath);
+        firestore = FirestoreDb.Create(projectId);
+        builder.Services.AddSingleton(firestore);
+        Console.WriteLine($"[FIREBASE-INIT] ✅ Firebase initialized from JSON environment variable!");
+    }
+    else if (!string.IsNullOrEmpty(projectId) && !string.IsNullOrEmpty(credentialsPath) && File.Exists(credentialsPath))
     {
         Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialsPath);
         firestore = FirestoreDb.Create(projectId);
