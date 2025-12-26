@@ -28,7 +28,11 @@ Console.WriteLine($"==========================================");
 var dbProvider = builder.Configuration["DatabaseProvider"];
 builder.Services.AddDbContext<DBBridge>(options =>
 {
-    if (dbProvider == "Sqlite")
+    if (dbProvider == "PostgreSQL")
+    {
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    }
+    else if (dbProvider == "Sqlite")
     {
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
     }

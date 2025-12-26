@@ -1,4 +1,15 @@
 services:
+  # PostgreSQL Database
+  - type: pserv
+    name: lostandfound-db
+    plan: free
+    env: docker
+    region: oregon
+    databases:
+      - name: lostandfounddb
+        user: lostandfounduser
+
+  # Web Service
   - type: web
     name: lostandfound-app
     env: docker
@@ -8,9 +19,11 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: DatabaseProvider
-        value: Sqlite
+        value: PostgreSQL
       - key: ConnectionStrings__DefaultConnection
-        value: Data Source=/app/data/LostAndFound.db
+        fromDatabase:
+          name: lostandfound-db
+          property: connectionString
       - key: Firebase__ProjectId
         sync: false
       - key: Firebase__CredentialsPath
