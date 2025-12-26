@@ -201,6 +201,21 @@ namespace EntityFrameWork_Pro.Repositories
             return await _db.Users.AnyAsync(u => u.UserName == username || u.Email == email);
         }
 
+        public async Task<User> GetUserByStudentIdAsync(string studentId)
+        {
+            return await _db.Users.FirstOrDefaultAsync(u => u.StudentId == studentId);
+        }
+
+        public async Task<bool> UserExistsByStudentIdAsync(string studentId)
+        {
+            return await _db.Users.AnyAsync(u => u.StudentId == studentId);
+        }
+
+        public async Task<User> GetUserByStudentIdAndPasswordAsync(string studentId, string password)
+        {
+            return await _db.Users.FirstOrDefaultAsync(u => u.StudentId == studentId && u.Password == password);
+        }
+
         public User GetUserByUsername(string username)
         {
             return _db.Users.FirstOrDefault(u => u.UserName == username);

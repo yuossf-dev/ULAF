@@ -27,7 +27,7 @@ namespace EntityFrameWork_Pro.Controllers
         public IActionResult SignUp() => View();
 
         [HttpPost]
-        public IActionResult SignUp(User user)
+        public async Task<IActionResult> SignUp(User user)
         {
             if (string.IsNullOrWhiteSpace(user.UserName) || user.UserName.Length < 4)
             {
@@ -145,7 +145,7 @@ namespace EntityFrameWork_Pro.Controllers
         }
 
         [HttpPost]
-        public IActionResult VerifyEmail(string verificationCode)
+        public async Task<IActionResult> VerifyEmail(string verificationCode)
         {
             if (TempData["PendingUser"] == null)
             {

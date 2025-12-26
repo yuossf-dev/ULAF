@@ -41,8 +41,11 @@ namespace EntityFrameWork_Pro.Interfaces
     {
         Task<User> GetUserByUsernameAsync(string username);
         Task<User> GetUserByEmailAsync(string email);
+        Task<User> GetUserByStudentIdAsync(string studentId);
+        Task<User> GetUserByStudentIdAndPasswordAsync(string studentId, string password);
         Task<User> AddUserAsync(User user);
         Task<bool> UserExistsAsync(string username, string email);
+        Task<bool> UserExistsByStudentIdAsync(string studentId);
         User GetUserByUsername(string username);
     }
 }
