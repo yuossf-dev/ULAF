@@ -132,79 +132,37 @@ namespace EntityFrameWork_Pro.Repositories
         // Synchronous methods for compatibility
         public IEnumerable<Item> GetAllItems()
         {
-            return _sqlRepo.GetAllItems();
+            return GetAllItemsAsync().GetAwaiter().GetResult();
         }
 
         public IEnumerable<Item> GetLostItems()
         {
-            return _sqlRepo.GetLostItems();
+            return GetLostItemsAsync().GetAwaiter().GetResult();
         }
 
         public IEnumerable<Item> GetFoundItems()
         {
-            return _sqlRepo.GetFoundItems();
+            return GetFoundItemsAsync().GetAwaiter().GetResult();
         }
 
         public Item GetItemById(int id)
         {
-            return _sqlRepo.GetItemById(id);
+            return GetItemByIdAsync(id).GetAwaiter().GetResult();
         }
 
         public void AddItem(Item item)
         {
-            Console.WriteLine($"[DUAL-REPO] Adding item (sync): {item.Name}");
-            
-            // Save to SQL
-            _sqlRepo.AddItem(item);
-            Console.WriteLine($"[DUAL-REPO] ✅ Saved to SQL (sync)");
-
-            // Save to Firebase if available
-            if (_hasFirebase)
-            {
-                try
-                {
-                    _firebaseRepo.AddItem(item);
-                    Console.WriteLine($"[DUAL-REPO] ✅ Saved to Firebase (sync)");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[DUAL-REPO] ⚠️ Firebase save failed (sync): {ex.Message}");
-                }
-            }
+            AddItemAsync(item).GetAwaiter().GetResult();
         }
 
         public void UpdateItem(Item item)
         {
-            _sqlRepo.UpdateItem(item);
-            
-            if (_hasFirebase)
-            {
-                try
-                {
-                    _firebaseRepo.UpdateItem(item);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[DUAL-REPO] ⚠️ Firebase update failed (sync): {ex.Message}");
-                }
-            }
+            UpdateItemAsync(item).GetAwaiter().GetResult();
         }
 
         public void DeleteItem(int id)
         {
-            _sqlRepo.DeleteItem(id);
-            
-            if (_hasFirebase)
-            {
-                try
-                {
-                    _firebaseRepo.DeleteItem(id);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[DUAL-REPO] ⚠️ Firebase delete failed (sync): {ex.Message}");
-                }
-            }
+            DeleteItemAsync(id).GetAwaiter().GetResult();
         }
     }
 }

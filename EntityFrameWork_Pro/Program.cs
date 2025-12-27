@@ -118,7 +118,7 @@ builder.Services.AddScoped<IItemRepository>(provider =>
 
 builder.Services.AddScoped<IUserRepository>(provider =>
 {
-    if (useFirebase && firestore != null)
+    if (firestore != null)
     {
         Console.WriteLine("[REPO-SELECTION] ✅ Using Firebase for Users");
         return provider.GetRequiredService<FirebaseUserRepository>();
