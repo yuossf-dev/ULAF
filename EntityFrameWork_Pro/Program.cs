@@ -101,33 +101,27 @@ builder.Services.AddScoped<IRepository>(provider =>
     return provider.GetRequiredService<SqlServerRepository>();
 });
 
-// Register DUAL repository for items - saves to BOTH SQL and Firebase
+// Register FIREBASE ONLY for items
 builder.Services.AddScoped<IItemRepository>(provider =>
 {
     if (firestore != null)
     {
-        Console.WriteLine("[REPO-SELECTION] ✅ Using DUAL Repository for Items (SQL + Firebase)");
-        return new DualItemRepository(
-            provider.GetRequiredService<SqlServerItemRepository>(),
-            provider
-        );
+        Console.WriteLine("[REPO-SELECTION] ✅ Using Firebase ONLY for Items");
+        return provider.GetRequiredService<FirebaseItemRepository>();
     }
-    Console.WriteLine("[REPO-SELECTION] ❌ Firebase not available - Using SQL only for Items");
+    Console.WriteLine("[REPO-SELECTION] ❌ Firebase not available - Using SQL for Items");
     return provider.GetRequiredService<SqlServerItemRepository>();
 });
 
-// Register DUAL repository for users - saves to BOTH SQL and Firebase
+// Register FIREBASE ONLY for users
 builder.Services.AddScoped<IUserRepository>(provider =>
 {
     if (firestore != null)
     {
-        Console.WriteLine("[REPO-SELECTION] ✅ Using DUAL Repository for Users (SQL + Firebase)");
-        return new DualUserRepository(
-            provider.GetRequiredService<SqlServerUserRepository>(),
-            provider
-        );
+        Console.WriteLine("[REPO-SELECTION] ✅ Using Firebase ONLY for Users");
+        return provider.GetRequiredService<FirebaseUserRepository>();
     }
-    Console.WriteLine("[REPO-SELECTION] ❌ Firebase not available - Using SQL only for Users");
+    Console.WriteLine("[REPO-SELECTION] ❌ Firebase not available - Using SQL for Users");
     return provider.GetRequiredService<SqlServerUserRepository>();
 });
 
