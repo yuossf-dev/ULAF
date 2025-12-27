@@ -13,15 +13,15 @@ builder.Services.AddControllersWithViews();
 // Register Microsoft Graph Service (for student validation)
 builder.Services.AddSingleton<MicrosoftGraphService>();
 
-// Register Email Service - Using SendGrid (works on Render, no SMTP port blocking)
-builder.Services.AddSingleton<EmailServiceSendGrid>();
+// Register Email Service - Using Brevo (works on Render, HTTP API, easy signup)
+builder.Services.AddSingleton<EmailServiceBrevo>();
 
 // Debug: Check if services are configured
 var validationToken = builder.Configuration["MicrosoftGraph:AccessToken"];
-var sendGridApiKey = builder.Configuration["SendGrid:ApiKey"];
+var brevoApiKey = builder.Configuration["Brevo:ApiKey"];
 Console.WriteLine($"==========================================");
 Console.WriteLine($"[STARTUP] Validation Token configured: {!string.IsNullOrEmpty(validationToken)}");
-Console.WriteLine($"[STARTUP] SendGrid API Key configured: {!string.IsNullOrEmpty(sendGridApiKey)}");
+Console.WriteLine($"[STARTUP] Brevo API Key configured: {!string.IsNullOrEmpty(brevoApiKey)}");
 Console.WriteLine($"==========================================");
 
 // Configure database based on provider setting
