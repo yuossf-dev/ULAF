@@ -8,11 +8,13 @@ namespace EntityFrameWork_Pro.Controllers
     public class ItemsController : Controller
     {
         private readonly IItemRepository _itemRepo;
+        private readonly IUserRepository _userRepo;
         private readonly IWebHostEnvironment _env;
 
-        public ItemsController(IItemRepository itemRepo, IWebHostEnvironment env)
+        public ItemsController(IItemRepository itemRepo, IUserRepository userRepo, IWebHostEnvironment env)
         {
             _itemRepo = itemRepo;
+            _userRepo = userRepo;
             _env = env;
         }
 
@@ -50,6 +52,22 @@ namespace EntityFrameWork_Pro.Controllers
             }
             
             model.UserId = userId.Value;
+            
+            // ✅ Load user name from repository for Firebase
+            try
+            {
+                var userName = HttpContext.Session.GetString("UserName");
+                if (!string.IsNullOrEmpty(userName))
+                {
+                    model.PostedBy = new User { UserName = userName };
+                    Console.WriteLine($"[ITEM-CREATE] Setting poster name: {userName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ITEM-CREATE] ⚠️ Could not load user name: {ex.Message}");
+            }
+            
             model.MediaPaths = new List<string>();
 
             string uploadFolder = Path.Combine(_env.WebRootPath, "Uploads");
