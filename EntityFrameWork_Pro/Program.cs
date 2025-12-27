@@ -13,15 +13,15 @@ builder.Services.AddControllersWithViews();
 // Register Microsoft Graph Service (for student validation)
 builder.Services.AddSingleton<MicrosoftGraphService>();
 
-// Register Email Service - Using SMTP (Outlook, no restrictions, no token expiration)
-builder.Services.AddSingleton<EmailServiceSMTP>();
+// Register Email Service - Using SendGrid (works on Render, no SMTP port blocking)
+builder.Services.AddSingleton<EmailServiceSendGrid>();
 
 // Debug: Check if services are configured
 var validationToken = builder.Configuration["MicrosoftGraph:AccessToken"];
-var smtpEmail = builder.Configuration["Email:Username"];
+var sendGridApiKey = builder.Configuration["SendGrid:ApiKey"];
 Console.WriteLine($"==========================================");
 Console.WriteLine($"[STARTUP] Validation Token configured: {!string.IsNullOrEmpty(validationToken)}");
-Console.WriteLine($"[STARTUP] SMTP Email configured: {!string.IsNullOrEmpty(smtpEmail)}");
+Console.WriteLine($"[STARTUP] SendGrid API Key configured: {!string.IsNullOrEmpty(sendGridApiKey)}");
 Console.WriteLine($"==========================================");
 
 // Configure database based on provider setting
