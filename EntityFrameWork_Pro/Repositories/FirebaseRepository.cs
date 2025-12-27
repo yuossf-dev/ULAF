@@ -56,7 +56,9 @@ namespace EntityFrameWork_Pro.Repositories
                 Date = item.Date.ToString("yyyy-MM-dd HH:mm:ss"),
                 item.Status,
                 item.ContactInfo,
-                item.MediaPathsJson
+                item.MediaPathsJson,
+                item.UserId, // ✅ Save UserId
+                PosterName = item.PostedBy?.UserName ?? item.PosterName // ✅ Save poster name
             });
             
             return item;
@@ -79,7 +81,9 @@ namespace EntityFrameWork_Pro.Repositories
                     Date = item.Date.ToString("yyyy-MM-dd HH:mm:ss"),
                     item.Status,
                     item.ContactInfo,
-                    item.MediaPathsJson
+                    item.MediaPathsJson,
+                    item.UserId, // ✅ Save UserId
+                    PosterName = item.PostedBy?.UserName ?? item.PosterName // ✅ Save poster name
                 });
             }
             return item;
@@ -104,7 +108,7 @@ namespace EntityFrameWork_Pro.Repositories
 
         private Item ConvertToItem(DocumentSnapshot doc)
         {
-            return new Item
+            var item = new Item
             {
                 Id = doc.GetValue<int>("Id"),
                 Name = doc.GetValue<string>("Name"),
@@ -116,6 +120,26 @@ namespace EntityFrameWork_Pro.Repositories
                 ContactInfo = doc.GetValue<string>("ContactInfo"),
                 MediaPathsJson = doc.GetValue<string>("MediaPathsJson")
             };
+            
+            // Try to get UserId
+            try
+            {
+                item.UserId = doc.ContainsField("UserId") ? doc.GetValue<int?>("UserId") : null;
+            }
+            catch { }
+            
+            // ✅ Create a temporary User object with the poster name
+            try
+            {
+                var posterName = doc.ContainsField("PosterName") ? doc.GetValue<string>("PosterName") : null;
+                if (!string.IsNullOrEmpty(posterName))
+                {
+                    item.PostedBy = new User { UserName = posterName };
+                }
+            }
+            catch { }
+            
+            return item;
         }
     }
 
