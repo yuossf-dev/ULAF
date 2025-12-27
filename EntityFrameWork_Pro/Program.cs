@@ -101,23 +101,18 @@ builder.Services.AddScoped<IRepository>(provider =>
     return provider.GetRequiredService<SqlServerRepository>();
 });
 
-// Register the repository resolver based on DatabaseMode
-// ALWAYS use Firebase in production
-var useFirebase = builder.Environment.IsProduction() || DatabaseMode.IsOnline;
-Console.WriteLine($"[REPO-SELECTION] Environment: {builder.Environment.EnvironmentName}");
-Console.WriteLine($"[REPO-SELECTION] IsProduction: {builder.Environment.IsProduction()}");
-Console.WriteLine($"[REPO-SELECTION] DatabaseMode.IsOnline: {DatabaseMode.IsOnline}");
-Console.WriteLine($"[REPO-SELECTION] useFirebase: {useFirebase}");
-Console.WriteLine($"[REPO-SELECTION] firestore != null: {firestore != null}");
-
+// Register DUAL repository for items - saves to BOTH SQL and Firebase
 builder.Services.AddScoped<IItemRepository>(provider =>
 {
-    if (useFirebase && firestore != null)
+    if (firestore != null)
     {
-        Console.WriteLine("[REPO-SELECTION] ✅ Using Firebase for Items");
-        return provider.GetRequiredService<FirebaseItemRepository>();
+        Console.WriteLine("[REPO-SELECTION] ✅ Using DUAL Repository (SQL + Firebase)");
+        return new DualItemRepository(
+            provider.GetRequiredService<SqlServerItemRepository>(),
+            provider
+        );
     }
-    Console.WriteLine("[REPO-SELECTION] ❌ Using SQL for Items");
+    Console.WriteLine("[REPO-SELECTION] ❌ Firebase not available - Using SQL only");
     return provider.GetRequiredService<SqlServerItemRepository>();
 });
 
