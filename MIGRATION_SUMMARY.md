@@ -1,47 +1,72 @@
-# ✅ Email Service Migration Complete
+# ✅ Email Service Migration Complete - SMTP Solution
 
-## 🔄 What Changed?
+## 🔄 What Changed? (UPDATED)
 
 ### 1. **Program.cs**
-- ❌ Removed: `EmailService` (Microsoft Graph)
-- ✅ Added: `EmailServiceResend` (Resend API)
-- Updated startup logs to check Resend API key instead of email token
+- ❌ Removed: `EmailService` (Microsoft Graph - token expires)
+- ❌ Removed: `EmailServiceResend` (can't send to other students without domain verification)
+- ✅ **Added: `EmailServiceSMTP`** (Outlook SMTP - BEST SOLUTION)
+- Updated startup logs to check SMTP configuration
 
 ### 2. **UserController.cs**
 - ❌ Removed: `EmailService _emailService`
-- ✅ Added: `EmailServiceResend _emailService`
-- All email sending now uses Resend (no code changes needed - same interface)
+- ✅ **Added: `EmailServiceSMTP _emailService`**
+- All email sending now uses SMTP (no code changes needed - same interface)
 
 ### 3. **appsettings.Production.json**
-- ✅ Added Resend configuration section
+- ✅ Added Email (SMTP) configuration section
 - Keeps Microsoft Graph config (still used for student validation)
+- Keeps Resend config (backup option)
 
 ### 4. **New Guide**
-- ✅ Created `RESEND_SETUP_GUIDE.md` with complete setup instructions
+- ✅ Created `SMTP_SETUP_GUIDE.md` with complete Outlook App Password setup
+- ✅ Updated `MIGRATION_SUMMARY.md` (this file)
+
+## ✅ Why SMTP Instead of Resend?
+
+**Resend Issue Found:**
+```
+❌ Resend Error: "You can only send testing emails to your own email address"
+```
+
+**Resend requires domain verification** to send to other students. This means:
+- ❌ Need access to zu.edu.jo DNS records
+- ❌ Need IT department approval
+- ❌ Takes time to set up
+
+**SMTP Solution:**
+- ✅ No restrictions - send to ANY email
+- ✅ No domain verification needed
+- ✅ Free with your Outlook account
+- ✅ Works immediately after setup
 
 ## 🎯 Next Steps (5 minutes)
 
-### Step 1: Get Resend API Key
-1. Go to https://resend.com and sign up (free)
-2. Create API key at https://resend.com/api-keys
-3. Copy the key (starts with `re_...`)
+### Step 1: Generate Outlook App Password (2 min)
+1. Go to https://account.microsoft.com/security
+2. Sign in with `ulaflostandfound@outlook.com`
+3. Go to Security → Advanced security options
+4. Click "App passwords"
+5. Create new: "Zarqa Lost & Found App"
+6. Copy the generated password (e.g., `abcd-efgh-ijkl-mnop`)
 
-### Step 2: Configure Render.com
+**Note:** If you don't see "App passwords", enable Two-step verification first.
+
+### Step 2: Configure Render.com (2 min)
 1. Open your Render dashboard
 2. Go to your service → Environment tab
-3. Add environment variable:
+3. Add these environment variables:
    ```
-   Resend__ApiKey = re_your_api_key_here
+   Email__Username = ulaflostandfound@outlook.com
+   Email__Password = your_app_password_here
+   Email__DisplayName = Zarqa University Lost & Found
    ```
-4. Render will auto-redeploy
+4. Save (auto-redeploys)
 
-### Step 3: Commit & Push Changes
-```bash
-cd C:\Users\Victus\Desktop\EntityFrameWork_Pro
-git add .
-git commit -m "Switch to Resend for email delivery - fix token expiration"
-git push origin main
-```
+**Important:** Use **double underscore** `__` (not single `_`)
+
+### Step 3: Push to GitHub (1 min)
+Say "push it" and I'll do it for you!
 
 ### Step 4: Test
 - Register a new user

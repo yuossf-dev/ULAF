@@ -13,15 +13,15 @@ builder.Services.AddControllersWithViews();
 // Register Microsoft Graph Service (for student validation)
 builder.Services.AddSingleton<MicrosoftGraphService>();
 
-// Register Email Service - Using Resend (reliable, no token expiration)
-builder.Services.AddSingleton<EmailServiceResend>();
+// Register Email Service - Using SMTP (Outlook, no restrictions, no token expiration)
+builder.Services.AddSingleton<EmailServiceSMTP>();
 
 // Debug: Check if services are configured
 var validationToken = builder.Configuration["MicrosoftGraph:AccessToken"];
-var resendApiKey = builder.Configuration["Resend:ApiKey"];
+var smtpEmail = builder.Configuration["Email:Username"];
 Console.WriteLine($"==========================================");
 Console.WriteLine($"[STARTUP] Validation Token configured: {!string.IsNullOrEmpty(validationToken)}");
-Console.WriteLine($"[STARTUP] Resend API Key configured: {!string.IsNullOrEmpty(resendApiKey)}");
+Console.WriteLine($"[STARTUP] SMTP Email configured: {!string.IsNullOrEmpty(smtpEmail)}");
 Console.WriteLine($"==========================================");
 
 // Configure database based on provider setting
